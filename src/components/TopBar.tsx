@@ -13,14 +13,14 @@ export default function TopBar({ onAddPatient, onDeletePatient, searchTerm, onSe
   return (
     <header id="top-bar" className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between shadow-sm z-10 shrink-0">
       <div className="flex items-center gap-4 flex-1">
-        <div className="relative group w-full max-w-sm">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-emr-primary transition-colors" />
+        <div className="group w-full max-w-sm flex items-center h-10 bg-white border border-slate-200 rounded-sm px-3 focus-within:border-emr-primary focus-within:ring-2 focus-within:ring-emr-primary/20 transition-all">
+          <Search size={18} className="text-slate-400 group-focus-within:text-emr-primary transition-colors shrink-0" />
           <input 
             type="text" 
-            className="input-emr pl-10 h-10 border-slate-200" 
+            className="w-full bg-transparent border-none outline-none pl-2 text-sm text-slate-700 h-full" 
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            placeholder="환자 검색 (이름, 차트번호)"
+            placeholder="환자검색"
           />
         </div>
         
