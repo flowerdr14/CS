@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { MenuId, Patient } from './types';
 import Sidebar from './components/Sidebar';
 import TopBar from './components/TopBar';
@@ -16,6 +16,7 @@ import OtherHospitalView from './components/views/OtherHospitalView';
 import AssessmentModal from './components/AssessmentModal';
 import PatientFormModal from './components/PatientFormModal';
 import PatientDetailModal from './components/PatientDetailModal';
+import { apiService } from './services/api';
 
 export default function App() {
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -26,6 +27,21 @@ export default function App() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [formInitialData, setFormInitialData] = useState<Patient | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Load patients from API
+  useEffect(() => {
+    const loadPatients = async () => {
+      setIsLoading(true);
+      const data = await apiService.fetchPatients();
+      setPatients(data);
+      if (data.length > 0) {
+        setSelectedPatientId(data[0].id);
+      }
+      setIsLoading(false);
+    };
+    loadPatients();
+  }, []);
 
   const selectedPatient = useMemo(() => 
     patients.find(p => p.id === selectedPatientId) || null
@@ -38,17 +54,36 @@ export default function App() {
     );
   }, [patients, searchTerm]);
 
-  const handleFormSubmit = (patientData: Patient) => {
+  const handleFormSubmit = async (patientData: Patient) => {
     const exists = patients.find(p => p.id === patientData.id);
+    let success = false;
+    
     if (exists) {
       // Update
-      setPatients(prev => prev.map(p => p.id === patientData.id ? patientData : p));
-      alert('환자 정보가 수정되었습니다.');
+      success = await apiService.updatePatient(patientData);
+      if (success) {
+        setPatients(prev => prev.map(p => p.id === patientData.id ? patientData : p));
+        alert('환자 정보가 수정되었습니다.');
+      }
     } else {
       // Add
-      setPatients(prev => [...prev, patientData]);
-      setSelectedPatientId(patientData.id);
-      alert('신규 환자가 등록되었습니다.');
+      success = await apiService.savePatient(patientData);
+      if (success) {
+        setPatients(prev => [...prev, patientData]);
+        setSelectedPatientId(patientData.id);
+        alert('신규 환자가 등록되었습니다.');
+      }
+    }
+
+    if (!success && !import.meta.env.VITE_BACKEND_URL) {
+      // Fallback for local UI only if no backend configured
+      if (exists) {
+        setPatients(prev => prev.map(p => p.id === patientData.id ? patientData : p));
+      } else {
+        setPatients(prev => [...prev, patientData]);
+        setSelectedPatientId(patientData.id);
+      }
+      console.warn('Backup: Backend not configured. Changes saved locally only.');
     }
   };
 
@@ -66,12 +101,16 @@ export default function App() {
     setIsFormModalOpen(true);
   };
 
-  const handleDeletePatient = () => {
+  const handleDeletePatient = async () => {
     if (!selectedPatientId) return;
     if (confirm('현재 선택된 환자 정보를 삭제하시겠습니까?')) {
-      const remaining = patients.filter(p => p.id !== selectedPatientId);
-      setPatients(remaining);
-      setSelectedPatientId(remaining[0]?.id || '');
+      const success = await apiService.deletePatient(selectedPatientId);
+      if (success || !import.meta.env.VITE_BACKEND_URL) {
+        const remaining = patients.filter(p => p.id !== selectedPatientId);
+        setPatients(remaining);
+        setSelectedPatientId(remaining[0]?.id || '');
+        if (!success) console.warn('Backup: Backend not configured. Deleted locally only.');
+      }
     }
   };
 
@@ -180,7 +219,15 @@ export default function App() {
             </div>
           )}
 
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden relative">
+            {isLoading && (
+              <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-[2px]">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-12 w-12 animate-spin rounded-full border-4 border-emr-primary border-t-transparent" />
+                  <p className="text-sm font-bold text-slate-500">데이터를 불러오는 중...</p>
+                </div>
+              </div>
+            )}
             {renderContent()}
           </div>
         </main>
