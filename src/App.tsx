@@ -17,40 +17,9 @@ import AssessmentModal from './components/AssessmentModal';
 import PatientFormModal from './components/PatientFormModal';
 import PatientDetailModal from './components/PatientDetailModal';
 
-const MOCK_PATIENTS: Patient[] = [
-  {
-    id: 'pt-001',
-    chartNo: 'C2026-0034',
-    room: '702-04 (내과)',
-    doctor: '김진수 (내과전문의)',
-    name: '홍길동',
-    birthDate: '1975-05-20',
-    gender: 'M',
-    age: 49,
-    address: '서울특별시 마포구 백범로 23',
-    diagnosis: 'Acute Gastritis',
-    chiefComplaint: 'Abdominal Pain, Nausea',
-    onSet: '2026-04-28 10:00'
-  },
-  {
-    id: 'pt-002',
-    chartNo: 'C2026-1182',
-    room: 'ER-01',
-    doctor: '이진아 (응급의학과)',
-    name: '김철수',
-    birthDate: '1988-11-12',
-    gender: 'M',
-    age: 36,
-    address: '경기도 성남시 분당구',
-    diagnosis: 'Colles Fracture',
-    chiefComplaint: 'Right wrist pain after fall',
-    onSet: '2026-04-29 22:30'
-  }
-];
-
 export default function App() {
-  const [patients, setPatients] = useState<Patient[]>(MOCK_PATIENTS);
-  const [selectedPatientId, setSelectedPatientId] = useState<string>(MOCK_PATIENTS[0].id);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [selectedPatientId, setSelectedPatientId] = useState<string>('');
   const [activeMenu, setActiveMenu] = useState<MenuId>('emergency');
   const [assessmentType, setAssessmentType] = useState<'NRS' | 'GCS' | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
