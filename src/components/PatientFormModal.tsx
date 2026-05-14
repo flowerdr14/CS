@@ -221,7 +221,7 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
                   ) : (
                     <>
                       <UserPlus size={18} />
-                      신고 환자 등록
+                      신규 환자 등록
                     </>
                   )}
                 </button>

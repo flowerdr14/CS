@@ -6,10 +6,12 @@ interface TopBarProps {
   onDeletePatient: () => void;
   searchTerm: string;
   onSearchChange: (val: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   selectedName: string;
 }
 
-export default function TopBar({ onAddPatient, onDeletePatient, searchTerm, onSearchChange, selectedName }: TopBarProps) {
+export default function TopBar({ onAddPatient, onDeletePatient, searchTerm, onSearchChange, onFocus, onBlur, selectedName }: TopBarProps) {
   return (
     <header id="top-bar" className="bg-white border-b border-slate-200 px-6 h-16 flex items-center justify-between shadow-sm z-10 shrink-0">
       <div className="flex items-center gap-4 flex-1">
@@ -20,6 +22,8 @@ export default function TopBar({ onAddPatient, onDeletePatient, searchTerm, onSe
             className="w-full bg-transparent border-none outline-none pl-2 text-sm text-slate-700 h-full" 
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
+            onFocus={onFocus}
+            onBlur={onBlur}
             placeholder="환자검색"
           />
         </div>

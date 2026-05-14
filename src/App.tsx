@@ -27,6 +27,7 @@ export default function App() {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [formInitialData, setFormInitialData] = useState<Patient | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load patients from API
@@ -48,14 +49,17 @@ export default function App() {
   , [patients, selectedPatientId]);
 
   const filteredPatients = useMemo(() => {
-    if (!searchTerm) return patients;
-    const lowerSearch = searchTerm.toLowerCase();
-    return patients.filter(p => 
-      p.name.toLowerCase().includes(lowerSearch) || 
-      p.chartNo.toLowerCase().includes(lowerSearch) ||
-      p.department.toLowerCase().includes(lowerSearch) ||
-      p.doctor.toLowerCase().includes(lowerSearch)
-    );
+    let result = patients;
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = patients.filter(p => 
+        p.name.toLowerCase().includes(lowerSearch) || 
+        p.chartNo.toLowerCase().includes(lowerSearch) ||
+        p.department.toLowerCase().includes(lowerSearch) ||
+        p.doctor.toLowerCase().includes(lowerSearch)
+      );
+    }
+    return [...result].sort((a, b) => a.name.localeCompare(b.name, 'ko'));
   }, [patients, searchTerm]);
 
   const handleFormSubmit = async (patientData: Patient) => {
@@ -194,12 +198,14 @@ export default function App() {
             onDeletePatient={handleDeletePatient}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
+            onFocus={() => setIsSearchFocused(true)}
+            onBlur={() => setTimeout(() => setIsSearchFocused(false), 200)}
             selectedName={selectedPatient?.name || ''}
           />
           
-          {/* Patient Quick Selector if filtered */}
-          {searchTerm && (
-            <div className="absolute top-36 z-20 left-64 right-80 bg-white border border-emr-secondary shadow-lg">
+          {/* Patient Quick Selector if filtered or focused */}
+          {(searchTerm || isSearchFocused) && (
+            <div className="absolute top-36 z-20 left-64 right-80 bg-white border border-emr-secondary shadow-lg max-h-96 overflow-y-auto">
                {filteredPatients.length > 0 ? (
                  filteredPatients.map(p => (
                    <div 
