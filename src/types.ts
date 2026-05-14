@@ -14,6 +14,7 @@ export interface Patient {
   id: string;
   chartNo: string;
   room: string;
+  department: string;
   doctor: string;
   name: string;
   birthDate: string;

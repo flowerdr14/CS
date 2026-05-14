@@ -12,7 +12,23 @@ async function startServer() {
   app.use(express.json());
 
   // In-memory storage for patients (demo purposes)
-  let patients: any[] = [];
+  let patients: any[] = [
+    {
+      id: "pt-123",
+      chartNo: "C10452",
+      name: "홍길동",
+      room: "702-04",
+      department: "내과",
+      doctor: "김진수",
+      birthDate: "1985-05-20",
+      gender: "M",
+      age: 39,
+      address: "서울특별시 강남구 테헤란로 123",
+      diagnosis: "Acute Gastritis",
+      chiefComplaint: "Epigastric pain, Nausea",
+      onSet: "2024-05-10 08:30"
+    }
+  ];
 
   // API Token Check (Optional: if the user set 'API_TOKEN' or 'Value' in Render)
   const API_TOKEN = process.env.VITE_BACKEND_API_TOKEN || process.env.Value;

@@ -65,18 +65,18 @@ export default function PatientDetailModal({ patient, isOpen, onClose }: Patient
 
                 {/* Medical Details */}
                 <div className="md:col-span-2 space-y-8">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
                       <div className="flex items-center gap-2 mb-2">
                         <Hospital size={16} className="text-emerald-500" />
-                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Room</span>
+                        <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">Department & Room</span>
                       </div>
-                      <p className="text-lg font-bold text-slate-800">{patient.room}</p>
+                      <p className="text-lg font-bold text-slate-800">{patient.department} / {patient.room}</p>
                     </div>
                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
                       <div className="flex items-center gap-2 mb-2">
-                        <User size={16} className="text-blue-500" />
-                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Doctor</span>
+                        <Stethoscope size={16} className="text-blue-500" />
+                        <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">Attending Physician</span>
                       </div>
                       <p className="text-lg font-bold text-slate-800">{patient.doctor}</p>
                     </div>

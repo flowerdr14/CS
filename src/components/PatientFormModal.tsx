@@ -35,10 +35,11 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
     e.preventDefault();
     const patientData: Patient = {
       id: initialData?.id || `pt-${Date.now()}`,
-      chartNo: initialData?.chartNo || `C${Math.floor(Math.random() * 9000 + 1000)}`,
-      name: formData.name || '미기입',
-      room: formData.room || '702-04',
-      doctor: formData.doctor || '김진수',
+      chartNo: initialData?.chartNo || `C${Math.floor(Math.random() * 90000 + 10000)}`,
+      name: formData.name || '',
+      room: formData.room || '미지정',
+      department: formData.department || '미지정',
+      doctor: formData.doctor || '미지정',
       birthDate: formData.birthDate || '1990-01-01',
       gender: formData.gender as 'M' | 'F',
       age: Number(formData.age) || 0,
@@ -56,12 +57,12 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-6">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 md:p-6">
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
-            className="flex w-full max-w-xl flex-col bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200"
+            className="flex w-full max-w-2xl flex-col bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 max-h-[90vh]"
           >
             <header className={`flex items-center justify-between px-6 py-4 text-white ${isEdit ? 'bg-indigo-600' : 'bg-emr-primary'}`}>
               <div className="flex items-center gap-3">
@@ -78,15 +79,15 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
               </button>
             </header>
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5 p-8">
-              <div className="grid grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 md:p-8 overflow-y-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">환자명</label>
                   <input 
                     type="text" 
                     required 
                     value={formData.name || ''}
-                    className="input-emr h-11" 
+                    className="input-emr h-10" 
                     onChange={e => setFormData({...formData, name: e.target.value})} 
                   />
                 </div>
@@ -95,17 +96,14 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
                   <input 
                     type="number" 
                     value={formData.age || ''}
-                    className="input-emr h-11" 
+                    className="input-emr h-10" 
                     onChange={e => setFormData({...formData, age: Number(e.target.value)})} 
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">성별</label>
                   <select 
-                    className="input-emr h-11" 
+                    className="input-emr h-10" 
                     value={formData.gender || 'M'}
                     onChange={e => setFormData({...formData, gender: e.target.value as 'M' | 'F'})}
                   >
@@ -113,12 +111,48 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
                     <option value="F">여성 (Female)</option>
                   </select>
                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">진료과</label>
+                  <input 
+                    type="text" 
+                    value={formData.department || ''}
+                    placeholder="예: 내과, 외과, 소아과"
+                    className="input-emr h-10" 
+                    onChange={e => setFormData({...formData, department: e.target.value})} 
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">주치의 (Attending Doctor)</label>
+                  <input 
+                    type="text" 
+                    value={formData.doctor || ''}
+                    placeholder="담당 의사 성함"
+                    className="input-emr h-10" 
+                    onChange={e => setFormData({...formData, doctor: e.target.value})} 
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">병실</label>
+                  <input 
+                    type="text" 
+                    value={formData.room || ''}
+                    placeholder="예: 702-04"
+                    className="input-emr h-10" 
+                    onChange={e => setFormData({...formData, room: e.target.value})} 
+                  />
+                </div>
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">생년월일</label>
                   <input 
                     type="date" 
                     value={formData.birthDate || ''}
-                    className="input-emr h-11" 
+                    className="input-emr h-10" 
                     onChange={e => setFormData({...formData, birthDate: e.target.value})} 
                   />
                 </div>
@@ -138,14 +172,36 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">주호소 (Chief Complaint)</label>
                 <textarea 
-                  className="input-emr min-h-[80px] py-3" 
+                  className="input-emr min-h-[60px] py-3" 
                   value={formData.chiefComplaint || ''}
                   placeholder="환자가 호소하는 주요 증상을 입력하세요"
                   onChange={e => setFormData({...formData, chiefComplaint: e.target.value})} 
                 />
               </div>
 
-              <div className="mt-4 flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">발병일시 (Onset)</label>
+                  <input 
+                    type="text" 
+                    value={formData.onSet || ''}
+                    placeholder="예: 2024-05-10 14:30"
+                    className="input-emr h-10" 
+                    onChange={e => setFormData({...formData, onSet: e.target.value})} 
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">주소</label>
+                  <input 
+                    type="text" 
+                    value={formData.address || ''}
+                    className="input-emr h-10" 
+                    onChange={e => setFormData({...formData, address: e.target.value})} 
+                  />
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end gap-3 pt-4 border-t border-slate-100 shrink-0">
                 <button 
                   type="button" 
                   onClick={onClose} 
@@ -165,7 +221,7 @@ export default function PatientFormModal({ isOpen, onClose, onSubmit, initialDat
                   ) : (
                     <>
                       <UserPlus size={18} />
-                      신규 환자 등록
+                      신고 환자 등록
                     </>
                   )}
                 </button>

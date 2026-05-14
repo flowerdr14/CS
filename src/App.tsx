@@ -49,8 +49,12 @@ export default function App() {
 
   const filteredPatients = useMemo(() => {
     if (!searchTerm) return patients;
+    const lowerSearch = searchTerm.toLowerCase();
     return patients.filter(p => 
-      p.name.includes(searchTerm) || p.chartNo.includes(searchTerm)
+      p.name.toLowerCase().includes(lowerSearch) || 
+      p.chartNo.toLowerCase().includes(lowerSearch) ||
+      p.department.toLowerCase().includes(lowerSearch) ||
+      p.doctor.toLowerCase().includes(lowerSearch)
     );
   }, [patients, searchTerm]);
 
@@ -62,28 +66,25 @@ export default function App() {
       // Update
       success = await apiService.updatePatient(patientData);
       if (success) {
-        setPatients(prev => prev.map(p => p.id === patientData.id ? patientData : p));
         alert('환자 정보가 수정되었습니다.');
       }
     } else {
       // Add
       success = await apiService.savePatient(patientData);
       if (success) {
-        setPatients(prev => [...prev, patientData]);
-        setSelectedPatientId(patientData.id);
         alert('신규 환자가 등록되었습니다.');
       }
     }
 
-    if (!success && !import.meta.env.VITE_BACKEND_URL) {
-      // Fallback for local UI only if no backend configured
-      if (exists) {
-        setPatients(prev => prev.map(p => p.id === patientData.id ? patientData : p));
-      } else {
-        setPatients(prev => [...prev, patientData]);
-        setSelectedPatientId(patientData.id);
-      }
-      console.warn('Backup: Backend not configured. Changes saved locally only.');
+    // Always fetch latest data from server to ensure synchronization
+    const latestData = await apiService.fetchPatients();
+    setPatients(latestData);
+    
+    if (!exists && success) {
+      // Find the newly added patient (could be different ID if server assigned one)
+      // For now we assume IDs match or we find by chartNo
+      const newPatient = latestData.find(p => p.chartNo === patientData.chartNo) || latestData[latestData.length - 1];
+      if (newPatient) setSelectedPatientId(newPatient.id);
     }
   };
 

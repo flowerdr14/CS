@@ -70,16 +70,20 @@ export default function PatientInfo({ patient, onOpenDetail }: PatientInfoProps)
 
         <div className="pt-4 space-y-4">
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Hospital Room</span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department & Room</span>
             <div className="flex items-center gap-2">
-              <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-sm font-bold text-slate-700">{patient.department}</span>
+              <span className="h-1 w-1 rounded-full bg-slate-300" />
               <span className="text-sm font-bold text-slate-700">{patient.room}</span>
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-[10px] font-bold text-slate-400 uppercase">Attending Doctor</span>
-            <span className="text-sm font-bold text-slate-700">{patient.doctor}</span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Attending Physician</span>
+            <div className="flex items-center gap-2">
+              <Stethoscope size={14} className="text-emr-primary" />
+              <span className="text-sm font-bold text-slate-800">{patient.doctor}</span>
+            </div>
           </div>
 
           <div className="flex flex-col gap-1">
